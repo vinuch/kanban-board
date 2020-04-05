@@ -4,15 +4,21 @@
       <input
         type="text"
         class="p-2 w-full mr-2 block text-xl font-bold"
+        ref="title"
         :value="task.name"
+        @click.stop.prevent=""
         @change="updateTaskProperty($event, 'name')"
         @keyup.enter="updateTaskProperty($event, 'name')"
+        @load="setFocus"
       >
 
       <textarea
+        ref="description"
         class="relative w-full bg-transparent px-2 border mt-2 h-64 border-none leading-normal"
+        @click.stop.prevent=""
         :value="task.description"
         @change="updateTaskProperty($event, 'description')"
+        @keyup.enter="updateTaskProperty($event, 'description')"
       />
     </div>
   </div>
@@ -24,9 +30,13 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters(['getTask']),
-    task () {
+    task() {
       return this.getTask(this.$route.params.id)
     }
+  },
+  mounted() {
+      this.$refs.title.focus();
+      this.$er
   },
   methods: {
     updateTaskProperty (e, key) {
@@ -35,6 +45,11 @@ export default {
         key,
         value: e.target.value
       })
+      e.target.value = ''
+    },
+    setFocus(arr) {
+      console.log('hi',arr)
+      this.$refs.arr.focus();
     }
   }
 }

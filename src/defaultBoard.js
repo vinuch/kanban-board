@@ -29,23 +29,13 @@ export default {
     {
       name: 'in-progress',
       tasks: [
-        {
-          description: '',
-          name: 'first task',
-          id: uuid(),
-          userAssigned: null
-        }
+  
       ]
     },
     {
       name: 'done',
       tasks: [
-        {
-          description: '',
-          name: 'first task',
-          id: uuid(),
-          userAssigned: null
-        }
+        
       ]
     }
   ]

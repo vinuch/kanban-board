@@ -17,19 +17,26 @@
             :key="$taskIndex"
             @click="goToTask(task)"
           >
-            <span class="">
-              {{ task.name }}
-            </span>
+            <div class="">
+              <span>{{ task.name }}</span>
+              
             <p
               v-if="task.description"
               class="font-weight-normal"
             >
               {{ task.description }}
             </p>
+            <div class="task-bg"
+            v-if="isTaskOpen && currentTask === task.id"
+            @click.stop="close">
+              <router-view/>
           </div>
-
+            </div>
+           
+          </div>
           
-          <input type="text" name="" id="" placeholder=" + Enter New Task" class="new-task">
+          
+          <input type="text" name="new-task-field"  placeholder=" + Enter New Task" class="new-task" @keyup.enter="createTask($event, column.tasks)">
           
         </div>
       </b-col>
@@ -46,14 +53,6 @@
       </b-col>
       
     </b-row>
-
-       
-
-    <div
-      class="task-bg"
-      v-if="isTaskOpen"
-      @click.self="close"
-    ></div>
   </b-container>
 </div>
 </template>
@@ -61,26 +60,38 @@
 <script>
 import { mapState } from 'vuex'
   export default {
+    data() {
+      return {
+        newColumnName: ''
+      }
+    },
     methods: {
+      createTask(e, tasks) {
+        this.$store.commit('CREATE_TASK', {tasks, name: e.target.value })
+        e.target.value = '';
+      },
       goToTask(task) {
-         this.$router.push({ name: 'task', params: { id: task.id } })
+         this.$router.push({ name: 'task', params: { id: task.id } }).catch(err => {err})
       },
       close() {
-        this.$router.push({ name: 'board' })
-      }
+        console.log('hello')
+        this.$router.replace({ name: 'board' })      }
     },
     computed: {
       ...mapState(['board']),
       isTaskOpen () {
-        return this.$route.name === 'task'
-      }
+        return this.$route.name === 'task' 
+      },
+      currentTask() {
+        return this.$route.params.id
+      } 
     }
   }
 </script>
 
 <style  scoped>
 .board {
-  background-color: #38a89d;
+  background-color: #f5824c;
   height: 100vh;
   color: #2c3e50;
   font-weight: 600;
@@ -109,6 +120,6 @@ import { mapState } from 'vuex'
 }
 .task-bg {
   /* @apply pin absolute; */
-  background: red;
+  /* background: red; */
 }
 </style>

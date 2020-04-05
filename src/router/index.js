@@ -9,15 +9,17 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
+    name: 'board',
    component: Board,
    children: [
-     {
-       path: 'task/:id',
-       name: 'task',
-       component: Task
-     }
+    {
+      path: 'task/:id',
+      name: 'task',
+      component: Task
+    }
    ]
   }
+  
 ]
 
 const router = new VueRouter({
