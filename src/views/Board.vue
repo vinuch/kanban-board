@@ -1,11 +1,16 @@
 <template>
 <div>
-  <b-container fluid class="board" @click.prevent="home">
+  <b-container fluid class="board" @click.ctrl.exact="home">
     <b-row class="row">
       <b-col
         class="column"
         v-for="(column, $columnIndex) of board.columns"
         :key="$columnIndex"
+        draggable
+        @drop="moveTaskOrColumn($event, column.tasks, $columnIndex)"
+        @dragover.prevent
+        @dragenter.prevent
+        @dragstart.self="pickupColumn($event, $columnIndex)"
       >
         <div class="column-title">
           {{ column.name }}
@@ -13,11 +18,16 @@
         <div class="list-reset">
           <div
             class="task"
+            draggable
             v-for="(task, $taskIndex) of column.tasks"
             :key="$taskIndex"
+            @dragstart.self="pickupTask($event, $taskIndex, $columnIndex)"
+            @dragenter.prevent
+            @dragover.prevent
+            @drop.stop="moveTaskOrColumn($event, column.tasks, $columnIndex, $taskIndex)"
             @click="goToTask(task)"
           >
-            <div class="">
+            <div>
               <span>{{ task.name }}</span>
               
             <p
@@ -29,7 +39,7 @@
             <div class="task-bg"
             v-if="isTaskOpen && currentTask === task.id"
             @click.stop="close">
-              <router-view/>
+              <router-view />
           </div>
             </div>
            
@@ -74,15 +84,55 @@ import { mapState } from 'vuex'
       },
       close() {
         if(this.$router.name !== 'board') {
-          console.log('hello')
         this.$router.replace({ name: 'board' })     
         }
          
       },
       home() {
-        console.log('hi');
         
         this.$router.push('/')
+      },
+      pickupTask (e, taskIndex, columnIndex) {
+        
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.dropEffect = 'move'
+        e.dataTransfer.setData('task-index', taskIndex)
+        e.dataTransfer.setData('from-column-index', columnIndex)
+        e.dataTransfer.setData('type', 'task')
+
+      },
+      pickupColumn (e, columnIndex) {
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.dropEffect = 'move'
+      
+        e.dataTransfer.setData('from-column-index', columnIndex)
+        e.dataTransfer.setData('type', 'column')
+      },
+      moveTask (e, toTasks, toTaskIndex) { // <--- Added toTaskIndex
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        const fromTasks = this.board.columns[fromColumnIndex].tasks
+        const fromTaskIndex = e.dataTransfer.getData('task-index')
+        this.$store.commit('MOVE_TASK', {
+          fromTasks,
+          fromTaskIndex, // <-- added index
+          toTasks,
+          toTaskIndex // <-- added index
+        })
+      },
+      moveTaskOrColumn(e,toTasks, toColumnIndex, toTaskIndex) {
+        const type = e.dataTransfer.getData('type')
+        if(type === 'task') {
+          this.moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+        }else {
+          this.moveColumn(e, toColumnIndex)
+        }
+      },
+      moveColumn(e, toColumnIndex) {
+        const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+        this.$store.commit('MOVE_COLUMN', {
+          fromColumnIndex,
+          toColumnIndex
+        })
       }
     },
     computed: {

@@ -15,10 +15,10 @@
       <textarea
         ref="description"
         class="relative w-full bg-transparent px-2 border mt-2 h-64 border-none leading-normal"
+        placeholder="Enter task description"
         @click.stop.prevent=""
         :value="task.description"
         @change="updateTaskProperty($event, 'description')"
-        @keyup.enter="updateTaskProperty($event, 'description')"
       />
     </div>
   </div>
