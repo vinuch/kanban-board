@@ -1,7 +1,7 @@
 <template>
 <div>
-  <b-container fluid class="board">
-    <b-row class="flex flex-row items-start">
+  <b-container fluid class="board" @click.prevent="home">
+    <b-row class="row">
       <b-col
         class="column"
         v-for="(column, $columnIndex) of board.columns"
@@ -43,9 +43,8 @@
 
       <b-col class="column">
           <input
-            size="35px"
+            size="33px"
             type="text"
-            class="p-2 mr-2"
             placeholder="New Column Name"
             v-model="newColumnName"
             @keyup.enter="createColumn"
@@ -74,8 +73,17 @@ import { mapState } from 'vuex'
          this.$router.push({ name: 'task', params: { id: task.id } }).catch(err => {err})
       },
       close() {
-        console.log('hello')
-        this.$router.replace({ name: 'board' })      }
+        if(this.$router.name !== 'board') {
+          console.log('hello')
+        this.$router.replace({ name: 'board' })     
+        }
+         
+      },
+      home() {
+        console.log('hi');
+        
+        this.$router.push('/')
+      }
     },
     computed: {
       ...mapState(['board']),
@@ -95,6 +103,10 @@ import { mapState } from 'vuex'
   height: 100vh;
   color: #2c3e50;
   font-weight: 600;
+  overflow-x: auto;
+}
+.row {
+  flex-wrap: nowrap;
 }
 .task {
   background-color: #fff;
