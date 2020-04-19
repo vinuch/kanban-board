@@ -1,6 +1,7 @@
 <template>
 <div>
   <b-container fluid class="board" @click.ctrl.exact="home">
+  <h1>KANBAN BOARD</h1>
     <b-row class="row">
       <b-col
         class="column"
@@ -75,6 +76,12 @@ import { mapState } from 'vuex'
       }
     },
     methods: {
+      createColumn() {
+        this.$store.commit('CREATE_COLUMN', {
+          name: this.newColumnName,
+        })
+        this.newColumnName = ''
+      },
       createTask(e, tasks) {
         this.$store.commit('CREATE_TASK', {tasks, name: e.target.value })
         e.target.value = '';
@@ -89,7 +96,6 @@ import { mapState } from 'vuex'
          
       },
       home() {
-        
         this.$router.push('/')
       },
       pickupTask (e, taskIndex, columnIndex) {
@@ -154,6 +160,11 @@ import { mapState } from 'vuex'
   color: #2c3e50;
   font-weight: 600;
   overflow-x: auto;
+}
+h1 {
+  font-weight: bold;
+  color: black;
+  text-decoration: underline;
 }
 .row {
   flex-wrap: nowrap;
